@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Data Science Project — Regression Analysis for Pricing Prediction</title>
+<meta name="description" content="CISC7204 Assignment 1 (Modules 01–06): regression pipelines that predict automobile, laptop and house prices, with cross-validation and Ridge regularisation tuned by GridSearchCV.">
+<meta name="author" content="Fong Chin Wai (Vivi)">
+<meta name="theme-color" content="#1B4F72">
+<meta property="og:title" content="Data Science Project — Regression Analysis for Pricing Prediction">
+<meta property="og:description" content="Full six-module regression pipeline with figures, notebooks and a reproducible README.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFFFFF;
+  --tint:#E8F2FB;
+  --tint-2:#D6E9F8;
+  --ink:#0F3D5C;
+  --ink-soft:#2B5876;
+  --body:#33556B;
+  --accent:#2E86C1;
+  --accent-deep:#1B4F72;
+  --line:#C9DEF0;
+  --line-soft:#E1EEF9;
+  --card:#FFFFFF;
+  --shadow:0 1px 2px rgba(27,79,114,.06), 0 10px 30px rgba(27,79,114,.07);
+  --radius:14px;
+  --max:1120px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--bg);color:var(--body);
+  font-family:"Inter","Helvetica Neue",Arial,"Noto Sans",sans-serif;
+  font-size:16.5px;line-height:1.68;-webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4,.serif{font-family:"Source Serif 4",Georgia,"Times New Roman",serif;color:var(--ink);line-height:1.22;font-weight:600}
+h1{font-size:clamp(2.05rem,4.6vw,3.25rem);margin:0 0 .5rem;letter-spacing:-.01em}
+h2{font-size:clamp(1.6rem,3vw,2.15rem);margin:0 0 .5rem}
+h3{font-size:1.22rem;margin:0 0 .55rem}
+p{margin:0 0 1rem}
+a{color:var(--accent-deep);text-decoration:none;border-bottom:1px solid var(--line)}
+a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+img{max-width:100%;display:block}
+code{font-family:"Cascadia Code","Consolas",monospace;font-size:.88em;background:var(--tint);border:1px solid var(--line-soft);border-radius:5px;padding:.1em .35em;color:var(--accent-deep)}
+pre{background:#0F3D5C;color:#D6E9F8;border-radius:12px;padding:18px 22px;overflow-x:auto;font-size:.88rem;line-height:1.6;margin:0 0 16px}
+pre code{background:none;border:0;color:inherit;padding:0;font-size:inherit}
+.container{max-width:var(--max);margin:0 auto;padding:0 24px}
+.skip{position:absolute;left:-9999px;top:0;background:var(--accent-deep);color:#fff;padding:10px 16px;z-index:60}
+.skip:focus{left:12px;top:12px}
+
+/* ---------- header ---------- */
+header.site{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.94);backdrop-filter:saturate(150%) blur(8px);border-bottom:1px solid var(--line-soft)}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:18px;height:64px}
+.brand{display:flex;align-items:center;gap:10px;border:0;font-weight:600;color:var(--ink);letter-spacing:-.01em}
+.brand:hover{border:0;color:var(--accent-deep)}
+.brand svg{width:26px;height:26px;color:var(--accent)}
+.navlinks{display:flex;gap:20px;align-items:center;font-size:.92rem}
+.navlinks a{border:0;color:var(--ink-soft);font-weight:500}
+.navlinks a:hover{color:var(--accent)}
+
+/* ---------- hero ---------- */
+.hero{background:linear-gradient(180deg,#F4FAFF 0%,var(--tint) 62%,#FFFFFF 100%);border-bottom:1px solid var(--line-soft)}
+.hero-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:52px;align-items:center;padding:64px 0 60px}
+.eyebrow{text-transform:uppercase;letter-spacing:.14em;font-size:.75rem;font-weight:600;color:var(--accent);margin:0 0 .9rem}
+.lede{font-size:1.09rem;color:var(--ink-soft);max-width:44ch}
+.chip{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:.84rem;color:var(--ink-soft);margin:2px 0 20px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px rgba(46,134,193,.18)}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px}
+.btn{display:inline-block;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:10px;padding:11px 20px;font-weight:600;font-size:.94rem}
+.btn:hover{border-color:var(--accent);color:var(--accent-deep)}
+.btn-primary{background:var(--accent-deep);border-color:var(--accent-deep);color:#fff}
+.btn-primary:hover{background:var(--accent);border-color:var(--accent);color:#fff}
+.hero-figure{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px}
+.hero-figure img{border-radius:8px}
+.hero-figure figcaption{font-size:.8rem;color:var(--body);margin-top:10px;padding-left:2px}
+.hero-linkbar{text-align:center;padding-bottom:46px}
+.hero-linkbar .btn{padding:13px 28px;font-size:1rem}
+
+/* ---------- sections ---------- */
+section{padding:64px 0}
+section.alt{background:var(--tint);border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft)}
+.sec-head{display:grid;grid-template-columns:1.1fr .9fr;gap:36px;align-items:end;margin-bottom:34px}
+.sec-head p{color:var(--ink-soft);margin:0}
+
+/* ---------- case cards ---------- */
+.case{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:30px 30px 26px}
+.case-head{display:flex;gap:18px;align-items:flex-start;border-bottom:1px solid var(--line-soft);padding-bottom:18px;margin-bottom:22px}
+.case-index{font-family:"Source Serif 4",Georgia,serif;font-size:1.5rem;font-weight:600;color:var(--accent);min-width:44px;line-height:1.1}
+.case-kicker{text-transform:uppercase;letter-spacing:.1em;font-size:.72rem;font-weight:600;color:var(--accent);margin:0 0 .35rem}
+.case-grid{display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:start}
+dl.case-dl{margin:0 0 16px}
+dl.case-dl dt{font-weight:600;color:var(--ink);font-size:.82rem;text-transform:uppercase;letter-spacing:.06em;margin-top:14px}
+dl.case-dl dt:first-child{margin-top:0}
+dl.case-dl dd{margin:4px 0 0}
+.metric{display:flex;align-items:baseline;gap:12px;background:var(--tint);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin:16px 0}
+.metric strong{font-family:"Source Serif 4",Georgia,serif;font-size:1.5rem;color:var(--accent-deep);line-height:1}
+.metric span{font-size:.88rem;color:var(--ink-soft)}
+.tags{display:flex;flex-wrap:wrap;gap:7px;margin:14px 0 12px;list-style:none;padding:0}
+.tags li{background:#F2F8FE;border:1px solid var(--line);border-radius:999px;padding:4px 11px;font-size:.78rem;color:var(--ink-soft)}
+figure{margin:0}
+.figs{display:grid;gap:12px}
+.figs.three{grid-template-columns:repeat(3,1fr)}
+.fig{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
+.fig img{border-bottom:1px solid var(--line-soft);width:100%}
+.fig figcaption{font-size:.79rem;color:var(--ink-soft);padding:9px 11px;line-height:1.5}
+
+/* ---------- data table ---------- */
+table.data{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:.92rem;margin:6px 0 8px}
+table.data th,table.data td{padding:11px 16px;text-align:left;border-top:1px solid var(--line-soft)}
+table.data th{background:var(--tint);color:var(--ink);font-weight:600;letter-spacing:.02em}
+table.data tr:first-child th{border-top:0}
+table.data td:first-child{font-family:"Cascadia Code","Consolas",monospace;font-size:.9em;color:var(--accent-deep)}
+table.data td{vertical-align:top}
+
+/* ---------- steps ---------- */
+ol.steps{margin:0;padding:0;list-style:none;counter-reset:step;display:grid;gap:14px}
+ol.steps li{counter-increment:step;background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 20px;display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:start}
+ol.steps li::before{content:"0" counter(step);font-family:"Source Serif 4",Georgia,serif;font-weight:600;color:var(--accent);font-size:1.15rem;line-height:1}
+ol.steps li h4{margin:0 0 4px}
+ol.steps li p{margin:0;font-size:.92rem}
+.downloads{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;list-style:none;padding:0;margin:14px 0 0}
+.downloads a{background:#fff;border:1px solid var(--line);border-radius:10px;padding:11px 14px;font-size:.86rem;font-weight:600;display:block;border-bottom:1px solid var(--line)}
+.downloads a:hover{border-color:var(--accent);color:var(--accent-deep)}
+.downloads small{display:block;font-weight:400;color:var(--body);font-size:.78rem;margin-top:2px}
+.note{background:#fff;border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:14px 18px;font-size:.9rem;color:var(--ink-soft);margin:20px 0 0}
+
+footer.site{background:#F4FAFF;border-top:1px solid var(--line-soft);padding:30px 0;font-size:.85rem;color:var(--body)}
+footer.site .container{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap}
+
+@media (max-width:980px){
+  .hero-grid{grid-template-columns:1fr;gap:32px;padding:46px 0}
+  .case-grid,.sec-head{grid-template-columns:1fr;gap:24px}
+  .figs.three,.downloads{grid-template-columns:1fr 1fr}
+}
+@media (max-width:620px){
+  body{font-size:16px}
+  .navlinks{gap:12px;font-size:.86rem}
+  .navlinks a.hide-sm{display:none}
+  section{padding:46px 0}
+  .case{padding:22px 18px}
+  .figs.three,.downloads{grid-template-columns:1fr}
+}
+@media print{
+  header.site,.hero-actions,.btn{display:none}
+  body{font-size:11pt;color:#000}
+  section{padding:14pt 0;break-inside:avoid}
+  .case,.fig,.step,.factlist,.contact-card{break-inside:avoid;box-shadow:none}
+  a{color:#000;border:0}
+  .hero{background:#fff}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site">
+  <nav class="nav container" aria-label="Primary navigation">
+    <a class="brand" href="#top">
+      <svg viewBox="0 0 40 40" fill="none" aria-hidden="true"><path d="M5 31 14 9l7 17 5-12 9 17" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="14" cy="9" r="2.5" fill="currentColor"/><circle cx="21" cy="26" r="2.5" fill="currentColor"/></svg>
+      <span>Data Science Project / Regression</span>
+    </a>
+    <div class="navlinks">
+      <a href="#question">Question</a>
+      <a class="hide-sm" href="#data">Data</a>
+      <a class="hide-sm" href="#methods">Methods</a>
+      <a class="hide-sm" href="#findings">Findings</a>
+      <a href="#reproduce">Reproduce</a>
+    </div>
+  </nav>
+</header>
+
+<main id="main">
+
+  <section class="hero" id="top">
+    <div class="container hero-grid">
+      <div>
+        <p class="eyebrow">CISC7204 Assignment 1 &middot; Modules 01&ndash;06</p>
+        <h1>Predicting Prices with Regression</h1>
+        <p class="lede">Can the market price of a product or a property be predicted from its features? This project builds a reproducible regression pipeline for used cars, laptops and houses: acquire the data, clean it with logged decisions, explore the relationships, fit the models, then validate them honestly with cross-validation and regularisation.</p>
+        <p class="chip"><span class="dot"></span>Data Science Project &middot; University of Macau</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="https://github.com/FongChinWai-Vivi/data-science-project" target="_blank" rel="noopener">View the full repository on GitHub</a>
+          <a class="btn" href="https://fongchinwai-vivi.github.io/data-science-portfolio/" target="_blank" rel="noopener">Back to Portfolio</a>
+        </div>
+      </div>
+      <figure class="hero-figure">
+        <img src="figures/m03_scatter_engine_size_vs_price.png" alt="Scatter plot of engine size against price with a fitted regression line">
+        <figcaption class="serif">Module 03 &mdash; engine size against price: the strongest single predictor of automobile price in this dataset (r = 0.872).</figcaption>
+      </figure>
+    </div>
+    <div class="container hero-linkbar">
+      <a class="btn btn-primary" href="https://fongchinwai-vivi.github.io/data-science-portfolio/" target="_blank" rel="noopener">Back to Portfolio</a>
+    </div>
+  </section>
+
+  <section id="question">
+    <div class="container">
+      <div class="sec-head">
+        <div>
+          <p class="eyebrow">Research question</p>
+          <h2>What drives price, and how well can regression capture it?</h2>
+        </div>
+        <p>The project asks one question across three markets: how accurately can a model predict the price of a used car, a laptop, and a house from its measurable features &mdash; and which features matter most?</p>
+      </div>
+      <div class="case">
+        <div class="case-grid">
+          <div>
+            <dl class="case-dl">
+              <dt>Scope</dt>
+              <dd>Six modules of CISC7204 Assignment 1: acquisition (M01), wrangling (M02), EDA (M03), linear regression (M04), cross-validation and Ridge regularisation (M05), and a final house-price project (M06).</dd>
+              <dt>Datasets</dt>
+              <dd>1985 automobile data from UCI, laptop data from IBM Skills Network, used cars from Kaggle, and a 21,613-row King County house-price dataset from Kaggle.</dd>
+              <dt>Deliverable</dt>
+              <dd>Six module notebooks, the processed datasets, all figures, and a README that reproduces the analysis end to end.</dd>
+            </dl>
+            <div class="metric"><strong>r = 0.872</strong><span>engine-size correlation with automobile price &mdash; the strongest feature relationship found in the data</span></div>
+          </div>
+          <div>
+            <ul class="tags"><li>Regression</li><li>Pricing prediction</li><li>Used cars</li><li>Laptops</li><li>Housing</li><li>CISC7204 Assignment 1</li></ul>
+            <p>Why this question: price prediction is the classic first regression problem &mdash; the data is tabular, the target is continuous, and the difference between a good and a careless answer is visible in a single R&sup2; number.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="alt" id="data">
+    <div class="container">
+      <div class="sec-head">
+        <div>
+          <p class="eyebrow">Dataset sources</p>
+          <h2>Six files, three markets, one workflow.</h2>
+        </div>
+        <p>Raw sources are external and credited; derived files are produced by the pipeline itself and kept alongside the notebooks that consume them.</p>
+      </div>
+      <table class="data">
+        <thead>
+          <tr><th>File</th><th>Description</th><th>Source</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>auto.csv</td><td>1985 automobile price data &mdash; 26 attributes including engine size, horsepower, curb weight and price.</td><td>UCI Machine Learning Repository (Automobile Data Set)</td></tr>
+          <tr><td>laptops.csv</td><td>Laptop specifications and prices used for the Module 04 linear regression exercise.</td><td>IBM Skills Network (laptop pricing dataset)</td></tr>
+          <tr><td>usedcars.csv</td><td>Used-car listings for the multiple regression exercise.</td><td>Kaggle (used cars dataset)</td></tr>
+          <tr><td>clean_df.csv</td><td>Cleaned version of the automobile data produced in Module 02 &mdash; question marks converted to NaN, missing values handled, dtypes corrected.</td><td>Derived &middot; produced by the pipeline</td></tr>
+          <tr><td>module_5_auto.csv</td><td>Feature-engineered automobile data prepared for cross-validation and Ridge regression in Module 05.</td><td>Derived &middot; produced by the pipeline</td></tr>
+          <tr><td>housing.csv</td><td>21,613 rows of King County house sales used for the Module 06 final project on house-price prediction.</td><td>Kaggle (King County house sales)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="methods">
+    <div class="container">
+      <div class="sec-head">
+        <div>
+          <p class="eyebrow">Methods &amp; tools</p>
+          <h2>An honest pipeline, not a model zoo.</h2>
+        </div>
+        <p>pandas and NumPy for data; Matplotlib and seaborn for EDA; scikit-learn for every model and every validation step. The pipeline is deliberately simple at each stage so that a decision can always be traced.</p>
+      </div>
+      <div class="case">
+        <dl class="case-dl">
+          <dt>Data acquisition</dt>
+          <dd>Read the raw files as they are, restore meaning (headers, units, placeholders) and record the source of each file.</dd>
+          <dt>Wrangling</dt>
+          <dd>Convert placeholders such as <code>?</code> to NaN, impute numeric columns with the mean where recoverable, fix data types, and bin horsepower into interpretable bands &mdash; each change logged in the notebook.</dd>
+          <dt>EDA</dt>
+          <dd>Correlation matrices and scatter plots rank the predictors, starting with engine size and price; histograms and binning charts show how the distributions actually look.</dd>
+          <dt>Modelling</dt>
+          <dd>Simple linear, multiple linear and polynomial regression on train/test splits, then <code>cross_val_score</code> for stability and <code>Ridge</code> with <code>GridSearchCV</code> to tune the penalty alpha.</dd>
+          <dt>Evaluation</dt>
+          <dd>R&sup2; and MSE reported on held-out test data &mdash; never on the training set &mdash; so the comparison between models is honest.</dd>
+        </dl>
+        <ul class="tags"><li>pandas</li><li>NumPy</li><li>Matplotlib</li><li>seaborn</li><li>scikit-learn</li><li>Jupyter</li></ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="alt" id="findings">
+    <div class="container">
+      <div class="sec-head">
+        <div>
+          <p class="eyebrow">Key findings &amp; limitation</p>
+          <h2>What the numbers say, and where they stop.</h2>
+        </div>
+        <p>Three conclusions survived validation; one honest caveat keeps them honest.</p>
+      </div>
+      <div class="case">
+        <div class="case-grid">
+          <div>
+            <dl class="case-dl">
+              <dt>Finding 1 &mdash; engine size and horsepower dominate car price</dt>
+              <dd><code>engine-size</code> correlates with price at r = 0.872, with horsepower close behind. Together they explain most of the variance that a simple linear model can capture.</dd>
+              <dt>Finding 2 &mdash; square footage dominates house price</dt>
+              <dd>Applied to the 21,613-row King County housing data, the same workflow shows living-area footage as the decisive predictor, with location and condition adding a smaller but real contribution.</dd>
+              <dt>Finding 3 &mdash; Ridge + GridSearchCV beats the naive flexible model</dt>
+              <dd>Plain polynomial regression overfits; Ridge regression with a grid-searched alpha lifts the test-set R&sup2; and stabilises MSE across cross-validation folds.</dd>
+            </dl>
+          </div>
+          <div>
+            <div class="metric"><strong>R&sup2;&uarr;</strong><span>test-set improvement after Ridge regularisation with GridSearchCV-tuned alpha</span></div>
+            <p class="note"><strong>Limitation:</strong> the automobile dataset is from 1985. Its relationships were stable enough to teach regression, but the absolute price levels and feature effects do not transfer to today's market &mdash; treat it as a modelling exercise, not a pricing oracle.</p>
+          </div>
+        </div>
+        <div class="figs three" style="margin-top:26px">
+          <figure class="fig">
+            <img src="figures/m03_scatter_engine_size_vs_price.png" alt="Scatter plot of engine size against price">
+            <figcaption>M03 &mdash; engine size vs price, the strongest relationship in the automobile data.</figcaption>
+          </figure>
+          <figure class="fig">
+            <img src="figures/m04_model_comparison_r2_mse.png" alt="R squared and MSE comparison across models">
+            <figcaption>M04 &mdash; R&sup2; and MSE for simple, multiple and polynomial regression.</figcaption>
+          </figure>
+          <figure class="fig">
+            <img src="figures/m05_gridsearch_alpha_tuning.png" alt="Grid search alpha tuning for ridge regression">
+            <figcaption>M05 &mdash; GridSearchCV picks the ridge alpha that improves the test set.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="reproduce">
+    <div class="container">
+      <div class="sec-head">
+        <div>
+          <p class="eyebrow">How to reproduce</p>
+          <h2>From zero to the same R&sup2; in four steps.</h2>
+        </div>
+        <p>Python 3 is assumed. The notebooks read their CSV files with relative paths, so clone the repository and run the notebooks from its root.</p>
+      </div>
+      <ol class="steps">
+        <li>
+          <div>
+            <h4>Clone the repository</h4>
+            <pre><code>git clone https://github.com/FongChinWai-Vivi/data-science-project.git
+cd data-science-project</code></pre>
+          </div>
+        </li>
+        <li>
+          <div>
+            <h4>Create a virtual environment</h4>
+            <pre><code>python -m venv .venv
+.venv\Scripts\activate        # Windows
+source .venv/bin/activate     # macOS / Linux</code></pre>
+          </div>
+        </li>
+        <li>
+          <div>
+            <h4>Install the pinned dependencies</h4>
+            <pre><code>pip install -r requirements.txt</code></pre>
+          </div>
+        </li>
+        <li>
+          <div>
+            <h4>Run the notebooks in order</h4>
+            <pre><code>jupyter notebook notebooks/</code></pre>
+            <p>Execute A1_Module01 through A1_Module06 in sequence. Each notebook regenerates its figures into the <code>figures/</code> folder as it runs.</p>
+          </div>
+        </li>
+      </ol>
+
+      <h3 style="margin-top:38px">Notebooks (download)</h3>
+      <ul class="downloads">
+        <li><a href="notebooks/A1_Module01_Lab01_DataAcquisition.ipynb">Module 01 — Data Acquisition<small>Download .ipynb</small></a></li>
+        <li><a href="notebooks/A1_Module02_Lab01_Wrangling.ipynb">Module 02 — Wrangling<small>Download .ipynb</small></a></li>
+        <li><a href="notebooks/A1_Module03_Lab01_EDA.ipynb">Module 03 — EDA<small>Download .ipynb</small></a></li>
+        <li><a href="notebooks/A1_Module04_Lab01_LinearRegression.ipynb">Module 04 — Linear Regression<small>Download .ipynb</small></a></li>
+        <li><a href="notebooks/A1_Module05_Lab01_CrossValidation_Ridge.ipynb">Module 05 — Cross-Validation &amp; Ridge<small>Download .ipynb</small></a></li>
+        <li><a href="notebooks/A1_Module06_FinalProj_HousePrice.ipynb">Module 06 — House-Price Project<small>Download .ipynb</small></a></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="alt" id="structure">
+    <div class="container">
+      <div class="sec-head">
+        <div>
+          <p class="eyebrow">Repository structure</p>
+          <h2>Everything in its place.</h2>
+        </div>
+        <p>Notebooks, data, figures and docs live in flat, predictable folders so that relative paths survive a fresh clone.</p>
+      </div>
+      <pre><code>data-science-project/
+&#9500;&#9472;&#9472; README.md
+&#9500;&#9472;&#9472; requirements.txt
+&#9500;&#9472;&#9472; data/
+&#9474;   &#9500;&#9472;&#9472; auto.csv
+&#9474;   &#9500;&#9472;&#9472; clean_df.csv
+&#9474;   &#9500;&#9472;&#9472; housing.csv
+&#9474;   &#9500;&#9472;&#9472; laptops.csv
+&#9474;   &#9500;&#9472;&#9472; module_5_auto.csv
+&#9474;   &#9492;&#9472;&#9472; usedcars.csv
+&#9500;&#9472;&#9472; figures/
+&#9474;   &#9500;&#9472;&#9472; m02_horsepower_binning_histogram.png
+&#9474;   &#9500;&#9472;&#9472; m02_missing_values_filled_with_mean.png
+&#9474;   &#9500;&#9472;&#9472; m03_scatter_engine_size_vs_price.png
+&#9474;   &#9500;&#9472;&#9472; m04_model_comparison_r2_mse.png
+&#9474;   &#9500;&#9472;&#9472; m05_gridsearch_alpha_tuning.png
+&#9474;   &#9492;&#9472;&#9472; m06_price_vs_sqft_correlations.png
+&#9492;&#9472;&#9472; notebooks/
+    &#9500;&#9472;&#9472; A1_Module01_Lab01_DataAcquisition.ipynb
+    &#9500;&#9472;&#9472; A1_Module02_Lab01_Wrangling.ipynb
+    &#9500;&#9472;&#9472; A1_Module03_Lab01_EDA.ipynb
+    &#9500;&#9472;&#9472; A1_Module04_Lab01_LinearRegression.ipynb
+    &#9500;&#9472;&#9472; A1_Module05_Lab01_CrossValidation_Ridge.ipynb
+    &#9492;&#9472;&#9472; A1_Module06_FinalProj_HousePrice.ipynb</code></pre>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site">
+  <div class="container">
+    <span>&copy; 2026 Fong Chin Wai (Vivi) &middot; CISC7204 Data Science Practice &mdash; Assignment 1</span>
+    <span>Part of <a href="https://fongchinwai-vivi.github.io/data-science-portfolio/" target="_blank" rel="noopener">my portfolio</a></span>
+  </div>
+</footer>
+
+</body>
+</html>

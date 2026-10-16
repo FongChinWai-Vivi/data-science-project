@@ -1,3 +1,14 @@
+---
+AIGC:
+    Label: "1"
+    ContentProducer: 001191440300708461136T1XGW3
+    ProduceID: 8aaebaa239fa14c1cf5eb03fd99189ca_2a6df89ac95a11f196f9525400248c00
+    ReservedCode1: +b16r9nME94jYlMI649D3dVnjp8Dq0WSxXO82Aht1izx2WiAJepunGhx0JDpcoXXa6ok0u91weElsc5KMPCpAYg6Jg3FnarheotZW6Fw3P9KUJBQYZyviktNLVtnrkxVtkRtLY3E8qYG9lF/h1N4daoFwupVatG0a04O5cIktNE/W8aNFm5xwtJZhYg=
+    ContentPropagator: 001191440300708461136T1XGW3
+    PropagateID: 8aaebaa239fa14c1cf5eb03fd99189ca_2a6df89ac95a11f196f9525400248c00
+    ReservedCode2: +b16r9nME94jYlMI649D3dVnjp8Dq0WSxXO82Aht1izx2WiAJepunGhx0JDpcoXXa6ok0u91weElsc5KMPCpAYg6Jg3FnarheotZW6Fw3P9KUJBQYZyviktNLVtnrkxVtkRtLY3E8qYG9lF/h1N4daoFwupVatG0a04O5cIktNE/W8aNFm5xwtJZhYg=
+---
+
 # Data Science Project: Regression Analysis for Pricing Prediction
 
 **Author:** Fong Chin Wai (Vivi) — Student ID: mc653748
@@ -131,3 +142,4 @@ Expected runtime: a few minutes per notebook on a standard laptop.
 
 *Course: CISC7204 Data Science Practice — Assignment 1. Built for Practice 9
 (Build Your Data Science Portfolio).*
+*（内容由AI生成，仅供参考）*
