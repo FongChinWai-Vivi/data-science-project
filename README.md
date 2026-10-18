@@ -7,6 +7,8 @@ This repository contains the complete regression analysis pipeline from Assignme
 of CISC7204. It predicts the market price of three product categories — **used cars**,
 **laptops**, and **houses** — from their features using supervised machine learning.
 
+**Live website:** [https://fongchinwai-vivi.github.io/data-science-project/](https://fongchinwai-vivi.github.io/data-science-project/) — browse this project as a GitHub Pages site (figure gallery + notebook download links).
+
 ---
 
 ## 1. Research Question
