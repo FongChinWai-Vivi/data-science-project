@@ -1,6 +1,6 @@
 # Peer Feedback — Practice 9 Step 4.02 (Simulated Classmate Review)
 
-**Reviewer:** anonymous classmate (simulated for the "Test and Improve" exercise).
+**Reviewer:** Fong Hio Lam (simulated for the "Test and Improve" exercise).
 **Site reviewed:** https://fongchinwai-vivi.github.io/data-science-project/
 
 ## Purpose of this project site
